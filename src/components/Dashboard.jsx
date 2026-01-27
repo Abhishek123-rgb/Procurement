@@ -89,7 +89,7 @@ const Dashboard = () => {
             <div className="card shadow-sm h-100">
               <div className="card-body text-center">
                 <h5 className="card-title text-muted mb-3">Monthly Spend</h5>
-                <div className="display-4 fw-bold text-danger">$45K</div>
+                <div className="display-4 fw-bold text-danger">45K</div>
               </div>
             </div>
           </div>
@@ -174,7 +174,7 @@ const Dashboard = () => {
                       <br />
                       <small className="text-muted">Office Supplies</small>
                     </div>
-                    <span className="text-primary fw-bold">$12,500</span>
+                    <span className="text-primary fw-bold">112,500</span>
                   </li>
                   <li className="list-group-item d-flex justify-content-between align-items-center">
                     <div>
@@ -182,7 +182,7 @@ const Dashboard = () => {
                       <br />
                       <small className="text-muted">IT Equipment</small>
                     </div>
-                    <span className="text-primary fw-bold">$8,900</span>
+                    <span className="text-primary fw-bold">8,900</span>
                   </li>
                   <li className="list-group-item d-flex justify-content-between align-items-center">
                     <div>
@@ -190,7 +190,7 @@ const Dashboard = () => {
                       <br />
                       <small className="text-muted">Furniture & Fixtures</small>
                     </div>
-                    <span className="text-primary fw-bold">$6,750</span>
+                    <span className="text-primary fw-bold">6,750</span>
                   </li>
                   <li className="list-group-item d-flex justify-content-between align-items-center">
                     <div>
@@ -198,7 +198,7 @@ const Dashboard = () => {
                       <br />
                       <small className="text-muted">Maintenance</small>
                     </div>
-                    <span className="text-primary fw-bold">$4,200</span>
+                    <span className="text-primary fw-bold">4,200</span>
                   </li>
                 </ul>
               </div>
