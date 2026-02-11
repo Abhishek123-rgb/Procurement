@@ -7,7 +7,7 @@ const Dashboard = () => {
   const { logout } = useAuth();
 
   // Combined data from all accounts
-  const allAccountsData = [
+  const [allAccountsData, setAllAccountsData] = useState([
     // Amazon orders
     { id: 1, orderId: 'AMZ-001', product: 'Laptop Stand', quantity: 5, price: 2500, status: 'Delivered', date: '2024-01-15', account: 'Amazon' },
     { id: 2, orderId: 'AMZ-002', product: 'Wireless Mouse', quantity: 10, price: 800, status: 'Shipped', date: '2024-01-18', account: 'Amazon' },
@@ -26,10 +26,12 @@ const Dashboard = () => {
     { id: 13, orderId: 'ZPT-003', product: 'Snacks Pack', quantity: 25, price: 350, status: 'Shipped', date: '2024-01-17', account: 'Zepto' },
     { id: 14, orderId: 'ZPT-004', product: 'Water Bottles', quantity: 50, price: 100, status: 'Processing', date: '2024-01-21', account: 'Zepto' },
     { id: 15, orderId: 'ZPT-005', product: 'Paper Cups', quantity: 100, price: 50, status: 'Delivered', date: '2024-01-24', account: 'Zepto' },
-  ];
+  ]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [editingId, setEditingId] = useState(null);
+  const [editedQuantity, setEditedQuantity] = useState('');
 
   // Filter data based on search and status
   const filteredData = allAccountsData.filter(item => {
@@ -39,6 +41,29 @@ const Dashboard = () => {
     const matchesStatus = filterStatus === 'All' || item.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const handleEdit = (item) => {
+    setEditingId(item.id);
+    setEditedQuantity(item.quantity);
+  };
+
+  const handleSave = (itemId) => {
+    // Update the quantity in the data
+    setAllAccountsData(prevData => 
+      prevData.map(item => 
+        item.id === itemId 
+          ? { ...item, quantity: parseInt(editedQuantity) || item.quantity }
+          : item
+      )
+    );
+    setEditingId(null);
+    setEditedQuantity('');
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditedQuantity('');
+  };
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
@@ -312,7 +337,20 @@ const Dashboard = () => {
                         </td>
                         <td className="fw-bold">{item.orderId}</td>
                         <td>{item.product}</td>
-                        <td>{item.quantity}</td>
+                        <td>
+                          {item.status === 'Pending' && editingId === item.id ? (
+                            <input
+                              type="number"
+                              className="form-control form-control-sm"
+                              style={{ width: '80px' }}
+                              value={editedQuantity}
+                              onChange={(e) => setEditedQuantity(e.target.value)}
+                              min="1"
+                            />
+                          ) : (
+                            item.quantity
+                          )}
+                        </td>
                         <td>₹{item.price.toLocaleString()}</td>
                         <td>
                           <span className={`badge ${getStatusBadgeClass(item.status)}`}>
@@ -321,18 +359,42 @@ const Dashboard = () => {
                         </td>
                         <td>{item.date}</td>
                         <td>
-                          <button className="btn btn-sm btn-outline-primary me-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye" viewBox="0 0 16 16">
-                              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-                              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
-                            </svg>
-                          </button>
-                          <button className="btn btn-sm btn-outline-danger">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                            </svg>
-                          </button>
+                          {item.status === 'Pending' ? (
+                            editingId === item.id ? (
+                              <div className="d-flex gap-1">
+                                <button
+                                  className="btn btn-sm btn-success"
+                                  onClick={() => handleSave(item.id)}
+                                  title="Save"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-lg" viewBox="0 0 16 16">
+                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                                  </svg>
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-secondary"
+                                  onClick={handleCancel}
+                                  title="Cancel"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                className="btn btn-sm btn-outline-primary"
+                                onClick={() => handleEdit(item)}
+                                title="Edit Quantity"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil" viewBox="0 0 16 16">
+                                  <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                                </svg>
+                              </button>
+                            )
+                          ) : (
+                            <span className="text-muted">-</span>
+                          )}
                         </td>
                       </tr>
                     ))
