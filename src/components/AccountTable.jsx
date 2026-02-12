@@ -175,7 +175,7 @@ const AccountTable = () => {
                             item.quantity
                           )}
                         </td>
-                        <td>₹{item.price.toLocaleString()}</td>
+                        <td>₹{(item.price * item.quantity).toLocaleString()}</td>
                         <td>
                           <span className={`badge ${getStatusBadgeClass(item.status)}`}>
                             {item.status}

@@ -73,7 +73,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="btn btn-primary btn-lg w-100 mb-3"
+                    className="btn btn-primary btn-lg w-100 mb-3 d-flex align-items-center justify-content-center"
                   >
                     {loading ? (
                       <>
